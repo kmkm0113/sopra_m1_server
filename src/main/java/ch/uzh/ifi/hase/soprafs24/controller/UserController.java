@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -53,5 +54,22 @@ public class UserController {
     User createdUser = userService.createUser(userInput);
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
+  }
+
+  @PostMapping("/login")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserDTO loginUser(@RequestBody UserPostDTO userPostDTO){
+    User userCredentials = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    User user = userService.login(userCredentials);
+    return DTOMapper.INSTANCE.convertEntityToUserDTO(user);
+  }
+
+  @PutMapping("/users/{userid}/logout")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO logoutUser(@PathVariable("userid") Long userid) {
+    User loggedOutUser = userService.logout(userid);
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
   }
 }
