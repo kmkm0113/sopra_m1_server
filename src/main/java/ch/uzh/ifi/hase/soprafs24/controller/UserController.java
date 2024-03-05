@@ -72,4 +72,14 @@ public class UserController {
     User loggedOutUser = userService.logout(userid);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
   }
+
+  @GetMapping("/users/{userid}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO getUserProfile(@PathVariable("userid") Long userid) {
+    // fetch user in the internal representation
+    User user = userService.getUserProfile(userid);
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+  }
+
 }

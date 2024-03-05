@@ -40,6 +40,11 @@ public class UserService {
     return this.userRepository.findAll();
   }
 
+  public User getUserProfile(Long id) {
+    checkIfUserIdExists(id);
+    return this.userRepository.findUserById(id);
+  }
+
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
