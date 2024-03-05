@@ -86,6 +86,24 @@ public class UserService {
 
   }
 
+  public void updateUser(User user){
+    Long id = user.getId();
+    String username = user.getUsername();
+    Date birthday = user.getBirthday();
+
+    checkIfUserIdExists(id);
+    User oldUser = userRepository.findUserById(id);
+    checkIfValidUser(user, oldUser);
+
+    if (username!=null && !username.isEmpty()){
+      checkIfUserExists(user);
+      oldUser.setUsername(username);
+    }
+    if (birthday!=null){
+      oldUser.setBirthday(birthday);
+    }
+  }
+
   /**
    * This is a helper method that will check the uniqueness criteria of the
    * username and the name
@@ -119,6 +137,12 @@ public class UserService {
     User userById = userRepository.findUserById(userId);
     if (userById == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found: "+userId);
+    }
+  }
+
+  private void checkIfValidUser(User newUser, User oldUser) {
+    if (!newUser.getToken().equals(oldUser.getToken())) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You can edit only your profile!");
     }
   }
 
