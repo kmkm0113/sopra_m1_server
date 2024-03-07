@@ -15,19 +15,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +54,6 @@ public class UserControllerTest {
     User user = new User();
     user.setId(1L);
     user.setUsername("testUsername");
-    user.setToken("1");
     user.setStatus(UserStatus.ONLINE);
 
     UserPostDTO userPostDTO = new UserPostDTO();
@@ -121,13 +122,16 @@ public class UserControllerTest {
     User user = new User();
     user.setId(1L);
     user.setUsername("username");
-    user.setPassword("password");
     user.setStatus(UserStatus.ONLINE);
+    String dateString = "2024-03-07T18:24:23.398+00:00";
+    Date date = Date.from(Instant.parse(dateString));
+    user.setCreationDate(date);
+    user.setBirthday(date);
 
     given(userService.getUserProfile(user.getId())).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder getRequest = get("/users/{userid}", user.getId())
+    MockHttpServletRequestBuilder getRequest = get("/users/{userId}", user.getId())
       .contentType(MediaType.APPLICATION_JSON);
 
     // then
@@ -135,7 +139,9 @@ public class UserControllerTest {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.id", is(user.getId().intValue())))
       .andExpect(jsonPath("$.username", is(user.getUsername())))
-      .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+      .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
+      .andExpect(jsonPath("$.creationDate", is(dateString)))
+      .andExpect(jsonPath("$.birthday", is(dateString)));
   }
 
   @Test
@@ -143,14 +149,11 @@ public class UserControllerTest {
     // given
     User user = new User();
     user.setId(1L);
-    //user.setUsername("username");
-    //user.setPassword("password");
-    //user.setStatus(UserStatus.ONLINE);
 
     given(userService.getUserProfile(user.getId())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder getRequest = get("/users/{userid}", user.getId())
+    MockHttpServletRequestBuilder getRequest = get("/users/{userId}", user.getId())
       .contentType(MediaType.APPLICATION_JSON);
 
     // then
@@ -163,15 +166,11 @@ public class UserControllerTest {
     // given
     User user = new User();
     user.setId(1L);
-    user.setUsername("testUsername");
-    user.setPassword("password");
 
-    doThrow(new ResponseStatusException(HttpStatus.NO_CONTENT))
-      .when(userService)
-      .updateUser(user);
+    doNothing().when(userService).updateUser(Mockito.any());
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder putRequest = MockMvcRequestBuilders.put("/users/{userid}", user.getId())
+    MockHttpServletRequestBuilder putRequest = put("/users/{userId}", user.getId())
       .contentType(MediaType.APPLICATION_JSON)
       .content(asJsonString(user));
 
@@ -182,18 +181,16 @@ public class UserControllerTest {
 
   @Test
   public void invalidId_whenPutUser_thenReturnNotFound() throws Exception {
-    // given put 404 not found
+    // given
     User user = new User();
     user.setId(1L);
-    user.setUsername("testUsername");
-    user.setStatus(UserStatus.ONLINE);
 
     doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
       .when(userService)
       .updateUser(Mockito.any());
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder putRequest = MockMvcRequestBuilders.put("/users/{userid}", user.getId())
+    MockHttpServletRequestBuilder putRequest = put("/users/{userId}", user.getId())
       .contentType(MediaType.APPLICATION_JSON)
       .content(asJsonString(user));
 

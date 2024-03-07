@@ -65,24 +65,24 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserDTO(user);
   }
 
-  @PutMapping("/users/{userid}/logout")
+  @PutMapping("/users/{userId}/logout")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO logoutUser(@PathVariable("userid") Long userid) {
-    User loggedOutUser = userService.logout(userid);
+  public UserGetDTO logoutUser(@PathVariable("userId") Long userId) {
+    User loggedOutUser = userService.logout(userId);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
   }
 
-  @GetMapping("/users/{userid}")
+  @GetMapping("/users/{userId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO getUserProfile(@PathVariable("userid") Long userid) {
+  public UserGetDTO getUserProfile(@PathVariable("userId") Long userId) {
     // fetch user in the internal representation
-    User user = userService.getUserProfile(userid);
+    User user = userService.getUserProfile(userId);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
-  @PutMapping("/users/{userid}")
+  @PutMapping("/users/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void updateUser(@RequestBody User user) {
