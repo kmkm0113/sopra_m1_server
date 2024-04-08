@@ -1,10 +1,10 @@
-package ch.uzh.ifi.hase.soprafs24.rest.dto;
+package ch.uzh.ifi.hase.soprafs24.websocket.dto;
 
 public class ChatMessage {
   private String content;
   private Long userId;
   private String username;
-  private Long gameId;
+  private Long lobbyId;
 
 
   public String getContent() {
@@ -31,11 +31,11 @@ public class ChatMessage {
     this.username = username;
   }
 
-  public Long getGameId() {
-    return gameId;
+  public Long getlobbyId() {
+    return lobbyId;
   }
 
-  public void setGameId(Long gameId) {
-    this.gameId = gameId;
+  public void setlobbyId(Long lobbyId) {
+    this.lobbyId = lobbyId;
   }
 }

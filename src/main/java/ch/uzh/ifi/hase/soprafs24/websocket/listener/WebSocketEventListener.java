@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs24.listener;
+package ch.uzh.ifi.hase.soprafs24.websocket.listener;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

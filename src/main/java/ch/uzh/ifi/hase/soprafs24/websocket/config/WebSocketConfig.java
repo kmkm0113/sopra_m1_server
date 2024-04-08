@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs24.config;
+package ch.uzh.ifi.hase.soprafs24.websocket.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -18,6 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.setApplicationDestinationPrefixes("/app");
-    registry.enableSimpleBroker("/topic");
+    registry.enableSimpleBroker("/topic", "/queue");
   }
 }

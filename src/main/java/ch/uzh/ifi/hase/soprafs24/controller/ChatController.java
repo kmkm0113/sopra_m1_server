@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
-import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatMessage;
+import ch.uzh.ifi.hase.soprafs24.websocket.dto.ChatMessage;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,9 +16,10 @@ public class ChatController {
     this.template = template;
   }
 
-  @MessageMapping("/chat.sendMessage")
-  public void broadcastMessage(@Payload ChatMessage message) {
-    String destination = "/topic/" + message.getGameId() + "/public";
+
+  @MessageMapping("/chat/{lobbyId}/sendMessage")
+  public void broadcastMessage(@DestinationVariable Long lobbyId, @Payload ChatMessage message) {
+    String destination = "/topic/" + lobbyId + "/chat";
     template.convertAndSend(destination, message);
   }
 
